@@ -1,23 +1,23 @@
 import React, { useEffect } from "react";
 import Chat from "./components/chat.js";
 import Navbar from "./components/navbar.js";
-import { auth, provider, signInWithRedirect, getRedirectResult } from "./firebase"; 
+import { auth, provider, signInWithRedirect, getRedirectResult } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
 
 function App() {
   const [user, loading, error] = useAuthState(auth);
 
+  // Handle sign-in redirect result after login
   useEffect(() => {
-    // Handle redirect result on page load
     getRedirectResult(auth)
       .then((result) => {
-        if (result) {
+        if (result?.user) {
           console.log("User signed in:", result.user);
         }
       })
-      .catch((error) => {
-        console.error("Redirect sign-in error:", error.message);
+      .catch((err) => {
+        console.error("Redirect sign-in error:", err.message);
       });
   }, []);
 
@@ -43,7 +43,7 @@ function App() {
       {user ? (
         <>
           <p>Welcome, {user.displayName}</p>
-          <Chat /> {/* Chat component is displayed */}
+          <Chat />
           <button onClick={handleSignOut}>Sign Out</button>
         </>
       ) : (
