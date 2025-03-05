@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
 import Chat from "./components/chat.js";
 import Navbar from "./components/navbar.js";
-import { auth, provider, signInWithRedirect, getRedirectResult } from "./firebase";
+import Login from "./components/login.js";
+import { auth, provider } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { signOut } from "firebase/auth";
+import { signInWithRedirect, getRedirectResult } from "firebase/auth";
 
 function App() {
   const [user, loading, error] = useAuthState(auth);
 
-  // Handle sign-in redirect result after login
+  // Handle Google Sign-in Redirect Result
   useEffect(() => {
     getRedirectResult(auth)
       .then((result) => {
@@ -25,32 +26,37 @@ function App() {
     signInWithRedirect(auth, provider);
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.error("Sign-out error:", err.message);
-    }
-  };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen text-lg">
+        Loading...
+      </div>
+    );
+  }
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        Error: {error.message}
+      </div>
+    );
+  }
 
   return (
     <div>
-      <Navbar user={user} handleSignOut={handleSignOut} />
-      
+      <Navbar user={user} />
+
       {user ? (
-        <>
-          <p>Welcome, {user.displayName}</p>
-          <Chat />
-          <button onClick={handleSignOut}>Sign Out</button>
-        </>
+        <div className="text-center mt-6">
+          <p className="text-xl">Welcome, {user.displayName} 👋</p>
+          <div className="chat-container">
+            <Chat />
+          </div>
+        </div>
       ) : (
-        <>
-          <p>Please sign in</p>
-          <button onClick={handleSignIn}>Sign In with Google</button>
-        </>
+        <div className="flex flex-col items-center justify-center h-screen">
+          <Login handleSignIn={handleSignIn} />
+        </div>
       )}
     </div>
   );
