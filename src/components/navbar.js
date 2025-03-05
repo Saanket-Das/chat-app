@@ -7,7 +7,7 @@ const Navbar = ({ user }) => {
 
   return (
     <nav className="bg-blue-500 p-4 flex justify-between items-center">
-      <h1 className="text-white text-xl font-bold">Chat App</h1>
+      <h1 className="text-white text-xl font-bold">Chat Galaxy</h1>
       {user ? (
         <div className="flex items-center gap-4">
           <img src={user.photoURL} alt="User" className="w-10 h-10 rounded-full" />
